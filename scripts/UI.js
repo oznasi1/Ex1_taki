@@ -1,7 +1,7 @@
 function Game() {
     var m_Engine;
     var turnPic;
-    
+
     this.initGame = function () {
         m_Engine = new GameEngine();
         m_Engine.initEngine();
@@ -15,7 +15,7 @@ function Game() {
     }
 
     function getRndInteger(min, max) {
-        return Math.floor(Math.random() * (max - min + 1) ) + min;
+        return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
     function render() {
@@ -37,14 +37,14 @@ function Game() {
 
         for (var i = 0; i < numOfLoops; i++) {
             var img = new Image();
-            img.setAttribute("class", (m_Engine.getPile().getPileCards()[i]).getAttributes()+" overLapCard");
-            var top = getRndInteger(0,5);
-            var left = getRndInteger(0,5);
-            var right = getRndInteger(0,5);
-            var bottom = getRndInteger(0,5);
-            var angle = getRndInteger(0,360);
-            img.style.transform = "rotate("+angle+"deg)";
-            img.style.margin = top + "px " + left + "px" + right + "px " + bottom + "px" ;
+            img.setAttribute("class", (m_Engine.getPile().getPileCards()[i]).getAttributes() + " overLapCard");
+            var top = getRndInteger(0, 5);
+            var left = getRndInteger(0, 5);
+            var right = getRndInteger(0, 5);
+            var bottom = getRndInteger(0, 5);
+            var angle = getRndInteger(0, 360);
+            img.style.transform = "rotate(" + angle + "deg)";
+            img.style.margin = top + "px " + left + "px" + right + "px " + bottom + "px";
             document.getElementById("pile").appendChild(img);
 
         }
@@ -102,21 +102,20 @@ function Game() {
     }
 
     function renderTurnsBoforeTheTurn() {
-        var NextPlayer = m_Engine.getPlayers()[(m_Engine.getPlayersObj().getCurrentPlayerIndex()+1)%2];
+        var NextPlayer = m_Engine.getPlayers()[(m_Engine.getPlayersObj().getCurrentPlayerIndex() + 1) % 2];
         renderTurns(NextPlayer);
     }
 
-     async function showError() {
+    async function showError() {
         var img = new Image();
         img.setAttribute("class", "notValidAction");
         document.getElementById("pile").appendChild(img);
-        await sleep(1000);
+        await sleep(500);
         document.getElementById("pile").removeChild(img);
     }
 
-
     function playerCard_OnClick(e) {
-        render();
+
         var turnResult = m_Engine.playerCard_OnClick(e);
         render();
         switch (turnResult) {
@@ -124,26 +123,21 @@ function Game() {
                 showError();
                 break;
             case 0:
-                renderTurnsBoforeTheTurn();
-                m_Engine.getPlayersObj().nextPlayerTurn();
+                renderTurnsBoforeTheTurn();//should update the pic according to the next player
+                                           //before the turn start
+                m_Engine.continueTheGame(turnResult);
                 break;
             case 1:  //user or bot need to pick color
                 chooseColor();
+                m_Engine.continueTheGame(turnResult);
                 break;
             case 2:
-                var hasMoreCards = m_Engine.checkForMoreCardColor();
-                if (!hasMoreCards) {
-                    renderTurnsBoforeTheTurn();
-                    m_Engine.getPlayersObj().nextPlayerTurn();
-                    m_Engine.getActionManager().setDefaultState();
-                }
-                else {
-                    m_Engine.getCurrentPlayer().startYourTurnFunc();
-                }
+                renderTurnsBoforeTheTurn();
+                alert("put all your cards with the same color / TAKI");
+                m_Engine.continueTheGame(turnResult);
                 break;
             case 3:
-                m_Engine.getActionManager().setDefaultState();
-                m_Engine.getPlayersObj().jumpNextPlayerTurn();
+                m_Engine.continueTheGame(turnResult);
                 break;
         }
     }

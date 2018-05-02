@@ -62,12 +62,11 @@ function ActionManager(deck, pile) {
 
         if (isValidCard) {
             result = eGameState["normal"];
-
             if (isActionCard) {
                 result = gameState;
             }
         }
-
+       
         return result;
     }
 

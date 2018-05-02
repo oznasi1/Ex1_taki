@@ -58,6 +58,7 @@ function GameEngine() {
 
         var gameState = actionManager.getCurrentGameState();
         //start turn
+        hasMoreCards = false;
         switch (gameState) {
             case eGameState["normal"]:
                 var cardIndex = event.target.id;
@@ -74,15 +75,53 @@ function GameEngine() {
                 var currPlayer = players.getCurrentPlayer();
                 var card = currPlayer.getCards()[cardIndex];
                 actionManager.AddCardToPile(currPlayer, card);
+                //var hasMoreCards =checkForMoreCardColor();
                 break;
             case eGameState["stop"]:
-                //handale by switch 2   
+                //handale by switch 2
                 break;
         }
         updatePlayerTopCardPile(); //every player need to know what the cuurnet card in pile
+
+        ///***** the taki bug is here
+        /*when you press taki and you should stay in taki state
+        the function actionManager.getGameResult(); change the state of the 
+        game to normal again and it should be like that */
+        
         var turnResult = actionManager.getGameResult();
+
         return turnResult;
     }
+
+
+    this.continueTheGame = function (turnResult) {
+        switch (turnResult) {
+            case -1:
+                break;
+            case eGameState["normal"]:
+                players.nextPlayerTurn();
+                break;
+            case  eGameState["change_colorful"]:  //user or bot need to pick color
+
+                break;
+            case eGameState["taki"]:
+                var hasMoreCards =checkForMoreCardColor();
+                if (!hasMoreCards) {
+                    players.nextPlayerTurn();
+                    actionManager.setDefaultState();
+                }
+                else {
+                    // if the player has more card we force him to play again
+                    players.getCurrentPlayer().startYourTurnFunc();
+                }
+                break;
+            case eGameState["stop"]:
+                actionManager.setDefaultState();
+                players.jumpNextPlayerTurn();
+                break;
+        }
+    }
+
 
     function updatePlayerTopCardPile() {
         var playersArr = players.getPlayersArray();
@@ -91,7 +130,7 @@ function GameEngine() {
         }
     }
 
-    this.checkForMoreCardColor = function () {
+    function checkForMoreCardColor() {
         var result = false;
         var currPlayer = players.getCurrentPlayer();
         var cards = currPlayer.getCards();
