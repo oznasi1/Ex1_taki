@@ -1,51 +1,49 @@
 
-
-
-
 var faceDownAttribute = "card_back";
 
 function Card(eColor, eId, card_atrributes,actionCard) {
     //attributes[1] is the valid attribute
-    var color = eColor;
-    var id = eId;
-    var cardAtrribute = card_atrributes;
-    var isUp = false;
-    var isActionCard = actionCard;
-    var attributes = ["card", faceDownAttribute];
+
+    this.color = eColor;
+    this.id = eId;
+    this.cardAtrribute = card_atrributes;
+    this.isUp = false;
+    this.isActionCard = actionCard;
+    this.attributes = ["card", faceDownAttribute];
 
     this.makeCardFaceUp = function () {
-        attributes[1] = cardAtrribute;
-        isUp = true;
+        this.attributes[1] = this.cardAtrribute;
+        this.isUp = true;
     }
 
     this.makeCardFaceDown = function () {
-        attributes[1] = faceDownAttribute;
-        isUp = false;
+        this.attributes[1] = faceDownAttribute;
+        this.isUp = false;
     }
 
     this.getAttributes = function () {
-        var attributesStr = attributes[0] + " " + attributes[1];
+        var attributesStr = this.attributes[0] + " " + this.attributes[1];
         return attributesStr;
     }
 
     this.addAttribute = function (newAttribute) {
-        attributes.push(newAttribute);
+        this.attributes.push(newAttribute);
     }
 
     this.getColor = function(){
-        return color;
+        return this.color;
     }
 
     this.getId = function(){
-        return id;
+        return this.id;
     }
 
     this.isUp = function(){
-        return isUp;
+        return this.isUp;
     }
 
     this.isActionCard = function(){
-        return isActionCard;
+        return this.isActionCard;
     }
 }
 

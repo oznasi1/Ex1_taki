@@ -76,6 +76,8 @@ body
     transition: 200ms ease margin;
     background-size: 100% 100%;
   }
+
+
   /*
   #botTurn{
     margin-top: 3%;
@@ -170,5 +172,52 @@ body
   margin-top: 30px;
   transition: 200ms ease margin;
   cursor: pointer;
+}
+
+.screen_center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: -50px; /* this is half the height of your div*/
+  margin-left: -100px;
+}
+
+.red{
+  background-color: indianred;
+}
+
+.blue{
+  background-color: dodgerblue;
+}
+.green{
+  background-color: limegreen;
+}
+.yellow{
+  background-color: yellow;
+}
+
+.btn-group button {
+
+  border: 1px solid white; /* Green border */
+  /*color: white; !* White text *!*/
+  padding: 40px 40px; /* Some padding */
+  cursor: pointer; /* Pointer/hand icon */
+  float: left; /* Float the buttons side by side */
+}
+
+/* Clear floats (clearfix hack) */
+.btn-group:after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+.btn-group button:not(:last-child) {
+  border-right: none; /* Prevent double borders */
+}
+
+/* Add a background color on hover */
+.btn-group button:hover {
+  display: flow;
 }
 

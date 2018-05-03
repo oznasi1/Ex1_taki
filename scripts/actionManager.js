@@ -1,83 +1,93 @@
-
 var eGameState = { "normal": 0, "change_colorful": 1, "taki": 2, "stop": 3 };
 
-function ActionManager(deck, pile) {
+function ActionManager(i_Pile) {
 
-    this.deck = deck;
-    this.pile = pile;
-    var gameState;
-    var isValidCard;
-    var isActionCard;
+    this.Pile = i_Pile;
+    this.gameState = null;
+    this.isValidCard = null;
+    this.isActionCard = null;
+    this.TakiColor = null;
 
     this.init = function () {
-        gameState = eGameState["normal"];
-        isValidCard = false;//was true???
-        isActionCard = false;//
+
+        this.gameState = eGameState["normal"];
+        this.isValidCard = false;
+        this.isActionCard = false;
+    };
+
+    function isActionCardFunc(i_Card) {
+
+        return (i_Card.getId() === "change_colorful" || i_Card.getId() === "taki" || i_Card.getId() === "stop");
+    };
+
+    this.checkValidCard = function (i_Card) {
+
+        return (this.Pile.getTopCardColor() === NO_COLOR ||
+            i_Card.getColor() === this.Pile.getTopCardColor() ||
+            i_Card.getId() === this.Pile.getTopCardId() ||
+            i_Card.getId() === "change_colorful");
+    };
+
+    this.AddCardToPileWhenTaki = function (i_CurrPlayer, i_Card) {
+
+        this.isValidCard = (eGameState["taki"] === eGameState[i_Card.getId()] || i_Card.getColor() === this.TakiColor);
+
+        if (this.isValidCard) {
+            this.Pile.addCard(i_Card);
+            i_CurrPlayer.removeCard(i_Card);
+
+            if (i_Card.getId() === "taki") {
+                this.TakiColor = i_Card.getColor();
+            }
+        }
+        else if(i_Card.getColor() !== this.TakiColor) {
+            this.gameState = eGameState["normal"];
+        }
     }
 
-    function isActionCardFunc(card){
-        if(card.getId()==="change_colorful"||
-        card.getId()==="taki"||
-        card.getId()==="stop")
+
+    this.AddCardToPile = function (i_CurrPlayer, i_Card) {
+
+        this.isValidCard = this.checkValidCard(i_Card);
+        if (this.isValidCard)
         {
-            return true;
-        }
-        return false;
-    }
+            this.Pile.addCard(i_Card);
+            i_CurrPlayer.removeCard(i_Card);
 
-    function checkValidCard(card) {
-
-        var result = false;
-        var x =pile.getTopCardColor();
-        var y=card.getId();
-        
-        if (pile.getTopCardColor() === NO_COLOR ||
-            card.getColor() === pile.getTopCardColor() ||
-            card.getId() === pile.getTopCardId() ||
-            card.getId() === "change_colorful" ||
-            pile.getTopCardId() === "change_colorful") {
-
-            result = true;
-        }
-        return result;
-    }
-
-    this.AddCardToPile = function (player, card) {
-
-        isValidCard = checkValidCard(card);
-
-        if (isValidCard) {
-            card.makeCardFaceUp();//for bot 
-            pile.addCard(card);
-            player.removeCard(card);
-            isActionCard = isActionCardFunc(card);
-            if (isActionCard) {
-                gameState = eGameState[card.getId()];
+            this.isActionCard = isActionCardFunc(i_Card);
+            if (this.isActionCard)
+            {
+                this.gameState = eGameState[i_Card.getId()];
+                if (this.gameState === eGameState["taki"])
+                {
+                    this.TakiColor = i_Card.getColor();
+                }
             }
         }
     }
 
-    this.getGameResult = function () {
-        var result = -1; //not added sign
 
-        if (isValidCard) {
-            result = eGameState["normal"];
-            if (isActionCard) {
-                result = gameState;
-            }
+this.getTurnResult = function () {
+    var result = -1; //not added sign
+
+    if (this.isValidCard) {
+        result = eGameState["normal"];
+        if (this.isActionCard) {
+            result = this.gameState;
         }
-       
-        return result;
     }
 
+    return result;
+};
 
-    this.setDefaultState = function () {
-        gameState = eGameState["normal"];
-        isValidCard = false;
-        isActionCard = false;
-    }
 
-    this.getCurrentGameState = function () {
-        return gameState;
-    }
+this.setDefaultState = function () {
+    this.gameState = eGameState["normal"];
+    this.isValidCard = true;
+    this.isActionCard = false;
+};
+
+this.getCurrentGameState = function () {
+    return this.gameState;
+};
 }
