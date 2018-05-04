@@ -12,9 +12,81 @@ function GameUI() {
         m_Engine.initEngine(this, NUM_OF_HUMAN, NUM_OF_BOT);
         document.getElementById("menuWrapper").style.display = "none";
         document.getElementById("gameWrapper").style.display = "block";
-
     };
 
+
+    this.RenderWinnerScreen = function (playersArr, winnerIndex, timer) {
+
+        document.getElementById("gameWrapper").style.display = "none";
+        document.getElementById("menuWrapper").style.display = "block";
+        document.getElementById("menuWrapper").innerHTML = "";
+
+        var elem =document.createElement("a","winner");
+        if(winnerIndex==0){
+            elem.innerHTML = "You Won!!!"+"<pre>";
+        }
+        else {
+            elem.innerHTML = "You Lost!!!"+"<pre>";
+        }
+        document.getElementById("menuWrapper").appendChild(elem);
+
+        elem =document.createElement("a","timer");
+        elem.innerHTML = "time:\n"+timer+"<pre>";
+        document.getElementById("menuWrapper").appendChild(elem);
+
+        elem =document.createElement("a","Human_num_turns");
+        elem.innerHTML = "number player turns:\n"+playersArr[0].getStats().getNumOfTurns()+"<pre>";
+        document.getElementById("menuWrapper").appendChild(elem);
+
+        elem =document.createElement("a","Human_avg_time");
+        elem.innerHTML = "average player time per turn:\n"+playersArr[0].getStats().getAvgPlayTime()+"<pre>";
+        document.getElementById("menuWrapper").appendChild(elem);
+
+        elem =document.createElement("a","Human_last_one");
+        elem.innerHTML =  "number of last card of player:\n"+playersArr[0].getStats().getNumOfOneCard()+"<pre>";
+        document.getElementById("menuWrapper").appendChild(elem);
+
+        elem =document.createElement("a","bot_num_turns");
+        elem.innerHTML =  "number bot turns:\n"+playersArr[1].getStats().getNumOfTurns()+"<pre>";
+        document.getElementById("menuWrapper").appendChild(elem);
+
+        elem =document.createElement("a","bot_last_one");
+        elem.innerHTML = "number of last card of bot:\n"+playersArr[1].getStats().getNumOfOneCard()+"<pre>";
+        document.getElementById("menuWrapper").appendChild(elem);
+
+    }
+
+
+
+    
+//     <div id="finishGameWrapper">
+//         <a id="winner"></a>
+//         <div id="human-stats" class="stats">
+//           <h2>Clock
+//             <a id="timer">0:0:0</a>
+//           </h2>
+//           <h1>Your Stats:</h1>
+//           <h2>Turns played:
+//             <a id="Human_num_turns">0</a>
+//           </h2>
+//           <h2 style="font-size: 100%;">Average turn time:
+//             <a id="Human_avg_time">0</a>
+//           </h2>
+//           <h2 style="font-size: 90%;">Last card declerations:
+//             <a id="Human_last_one">0</a>
+//           </h2>
+//         </div>
+//         <div id="bot-stats" class="stats">
+//           <h1>bot Stats:</h1>
+//           <h2>Turns played:
+//             <a id="bot_num_turns">0</a>
+//           </h2>
+//           <h2 style="font-size: 90%;">Last card declerations:
+//             <a id="bot_last_one">0</a>
+//           </h2>
+//         </div>
+//       </div>
+//   </div>
     function getRndInteger(min, max) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
@@ -105,12 +177,12 @@ function GameUI() {
         }
     }
 
-    function renderError(){
+    function renderError() {
 
         var img = new Image();
         img.setAttribute("class", "notValidAction");
         img.setAttribute("id", "error_screen")
-        img.style.display  = "none";
+        img.style.display = "none";
         document.getElementById("pile").appendChild(img);
     }
 
@@ -140,7 +212,7 @@ function GameUI() {
         document.getElementById("error_screen").style.display = "none";
     };
 
-    function renderColorPicker () {
+    function renderColorPicker() {
         //"red", "blue", "green", "yellow"
         var colorPicker = document.createElement("div");
         colorPicker.setAttribute("id", "colorPicker");
@@ -176,11 +248,11 @@ function GameUI() {
         document.getElementById("pile").appendChild(colorPicker);
     }
 
-    this.ShowColorPicker = function(){
+    this.ShowColorPicker = function () {
         document.getElementById("colorPicker").style.display = "block";
     }
 
-    function HideColorPicker(){
+    function HideColorPicker() {
         document.getElementById("colorPicker").style.display = "none";
     }
 

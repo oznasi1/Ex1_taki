@@ -44,5 +44,13 @@ function Stats() {
         this.AvgPlayingTimePerTurn = this.TimePlaying / this.NumOfTurns;
         return this.AvgPlayingTimePerTurn;
     };
+
+    this.getNumOfTurns = function(){
+        return this.NumOfTurns;
+    }
+
+    this.getNumOfOneCard = function(){
+        return this.NumOfOneCardOnly;
+    }
 }
 

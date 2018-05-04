@@ -15,7 +15,7 @@ function GameEngine() {
 
     this.initEngine = function (i_UI, i_NumberOfHuman, i_NumberOfBots) {
         this.gameTimer = 0;
-        this.timeInterval = setInterval(timer, 1000);
+        this.timeInterval = setInterval(this.timer, 1000);
         this.Running = true; // will enable/disable click events
         this.Running = true; // will enable/disable click events
         this.UI = i_UI; //will help us print to screen

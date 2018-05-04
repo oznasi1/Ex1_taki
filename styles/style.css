@@ -12,6 +12,13 @@ body
     position: relative;
 }
 
+#finishGameWrapper
+{
+    height: 95%;
+    position: relative;
+}
+
+
 #gameWrapper
 {
     height: 90%;
