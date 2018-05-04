@@ -41,10 +41,28 @@ function Deck() {
         for (var i = 0; i < NUM_OF_CHANGE_COLOR_CARD; i++) {
             var changeColorfulID = cardID[cardID.length - 1];
             var cardAtrribute = "card_" + changeColorfulID;
-            var card = new Card(NO_COLOR, changeColorfulID, cardAtrribute)//CHANGE_COLOR
+            var card = new Card(NO_COLOR, changeColorfulID, cardAtrribute, true)//CHANGE_COLOR
             this.Cards.push(card);
         }
     }
+
+    this.createDeckFromPile = function(i_Cards){
+
+        this.Cards = i_Cards;
+
+        //make all the cards face down
+        for(var i = 0; i < this.Cards.length; i++){
+
+            var card = this.Cards[i].makeCardFaceDown();
+
+            if(card.getId() === "change_colorful"){
+                card.setColor(NO_COLOR);
+                card.setAttribute("card_change_colorful");
+            }
+        }
+
+        this.shuffle();
+    };
 
     this.shuffle = function() {
         for (var i = 0; i < this.Cards.length; i++) {
@@ -53,15 +71,13 @@ function Deck() {
             this.Cards[i] = this.Cards[rndNo];
             this.Cards[rndNo] = card;
         }
-    }
+    };
 
     this.getTopCardFromDeck = function(){
-        if(this.Cards.length === 1){// last card
-            //this.Cards = getPile(); not exist yet
-            this.shuffle();
-        }
-        return this.Cards.pop();
-    }
+        var topCard = this.Cards.pop(); 
+        
+        return topCard;
+    };
 
     this.getCards = function ()
     {

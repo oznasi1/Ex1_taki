@@ -1,22 +1,21 @@
 function GameEngine() {
 
-    this.Running = false; //new
-    this.UI = null;         //new
+    this.Running = false; 
+    this.UI = null;       
     this.Deck = new Deck();
     this.Players = new Players();
     this.Pile = new Pile();
     this.ActionManager = new ActionManager(this.Pile);
-    this.gameTimer;
-    this.timeInterval;
+    var s_gameTimer = 0;
+    this.timeInterval = null;
 
     this.timer = function(){
-        this.gameTimer++;
-    }
+        s_gameTimer += 1;
+    };
 
     this.initEngine = function (i_UI, i_NumberOfHuman, i_NumberOfBots) {
-        this.gameTimer = 0;
+        s_gameTimer = 0;
         this.timeInterval = setInterval(this.timer, 1000);
-        this.Running = true; // will enable/disable click events
         this.Running = true; // will enable/disable click events
         this.UI = i_UI; //will help us print to screen
         this.Deck.init();
@@ -26,24 +25,33 @@ function GameEngine() {
         this.UI.Render(this.Deck, this.Pile, this.Players); //new
     };
 
-    this.noMoreCards = function (i_CurrPlayer) {
+    this.hasMoreCards = function (i_CurrPlayer) {
 
         var result = false;
         var cards = i_CurrPlayer.getCards();
         var pileColor = this.Pile.getTopCardColor();
 
-        cards.forEach(card => {
-            if (card.getColor() === pileColor || card.getId() === "change_colorful" || card.getId() === "taki") {
+        for(var i = 0; i < cards.length; i++) {
+
+            if (cards[i].getColor() === pileColor){
                 result = true;
+                break;
             }
-        });
+        }
+
         return result;
-    }
+    };
 
     this.Deck_OnClick = function (event) {
 
         if (this.Running) {
             this.DeckClick();
+
+            var isDeckEmpty = (this.Deck.Cards.length === 0);
+            if(isDeckEmpty){
+                var pileCards = this.Pile.getCards();
+                this.Deck.createDeckFromPile(pileCards);
+            }
         }
     };
 
@@ -57,6 +65,9 @@ function GameEngine() {
             this.Players.startTurn();
     };
     
+    this.getTimer = function(){
+        return s_gameTimer;
+    }
     //info:
     //-1 = falid
     // 0 = added card
@@ -65,8 +76,10 @@ function GameEngine() {
     // // 3 = stop
     this.Card_OnClick = function (event) {
 
-        var cardIndex = event.target.id;
-        this.CardClick(cardIndex);
+        if (this.Running) {
+            var cardIndex = event.target.id;
+            this.CardClick(cardIndex);
+        }
 
     };
 
@@ -75,27 +88,33 @@ function GameEngine() {
         this.startTurn(i_CardIndex);
         this.endTurn();
         this.update(); //deck cards = 1 =>> shffle + check winner losser
-    }
+        this.Players.startTurn();
+    };
 
-    this.update = function(){
+    this.update = function () {
 
-        var playersList = this.Players.getPlayersList();
+        var winnerIndex = this.checkForWinner();
+        if (winnerIndex != null) {
+            clearInterval(this.timeInterval);
+            this.Running = false;
+            this.UI.RenderWinnerScreen(this.Players.getPlayersList(), winnerIndex, s_gameTimer);
+        }
+    };
+
+    this.checkForWinner = function(){
+
         var winnerIndex = null;
+        var playersList = this.Players.getPlayersList();
 
-        for(var i = 0; i < playersList.length; i++){
+        for (var i = 0; i < playersList.length; i++) {
 
-            if(playersList[i].getCards().length === 0)
-            {
+            if (playersList[i].getCards().length === 0) {
                 winnerIndex = i;
-               break;
+                break;
             }
         }
 
-        if(winnerIndex != null){
-            clearInterval(this.timeInterval);
-            this.UI.RenderWinnerScreen(this.Players.getPlayersList(), winnerIndex, this.gameTimer);
-        }
-
+        return winnerIndex;
     }
 
     this.startTurn = function (i_CardIndex) {
@@ -112,6 +131,9 @@ function GameEngine() {
             case eGameState["change_colorful"]: //change the pile color
                 var newPileColor = i_CardIndex; /////////in this call i_CardIndex == new color
                 this.Pile.setTopCardColor(newPileColor);
+                var topPileCard = this.Pile.getTopCardFromPile();
+                topPileCard.setAttributes("card_change_"+ i_CardIndex);
+                topPileCard.setColor(i_CardIndex);
                 this.ActionManager.setDefaultState();  //return to normal state & isValidCard = true
                 break;
 
@@ -140,24 +162,25 @@ function GameEngine() {
             case eGameState["normal"]: //render after player play and then change to next player
                 this.Players.nextPlayerTurn(); //add delay to the bot algo
                 this.UI.Render(this.Deck, this.Pile, this.Players);
-                // this.Players.startTurn();
                 break;
 
             case eGameState["change_colorful"]:  //user or bot need to pick color
                 this.UI.Render(this.Deck, this.Pile, this.Players);
                 this.UI.ShowColorPicker();
-                // this.CardClick("red");//***************************************************only for testing
                 break;
 
             case eGameState["taki"]:
-                if (!this.noMoreCards(this.Players.getCurrentPlayer())) // run out of Cards in the same color
+                if (!this.hasMoreCards(this.Players.getCurrentPlayer())) // run out of Cards in the same color
                 {
                     this.ActionManager.setDefaultState();
                     this.Players.nextPlayerTurn();
                     this.UI.Render(this.Deck, this.Pile, this.Players);
-                    // this.Players.startTurn();
                 }
-                this.UI.Render(this.Deck, this.Pile, this.Players);
+                else{
+                    this.Players.getCurrentPlayer().setPlayingToFalse();
+                    this.UI.Render(this.Deck, this.Pile, this.Players);
+                }
+
                 break;
 
             case eGameState["stop"]:
@@ -165,10 +188,9 @@ function GameEngine() {
                 this.UI.Render(this.Deck, this.Pile, this.Players);
                 this.Players.nextPlayerTurn();
                 this.ActionManager.setDefaultState();
-                // this.Players.startTurn();
+
                 break;
         }
 
-        this.Players.startTurn();
     }
 }

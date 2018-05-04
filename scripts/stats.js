@@ -4,11 +4,11 @@ function Stats() {
     this.AvgPlayingTimePerTurn = 0;
     this.NumOfOneCardOnly = 0;
     this.NumOfTurns = 0;
-    this.TimePlaying = 0; // your turn only
+    var s_TimePlaying = 0; // your turn only
     this.IntervalTimerId;
 
-    function timePlayingCounter() {
-        this.TimePlaying++;
+    this.timePlayingCounter = function() {
+        s_TimePlaying += 1;
     }
 
     this.init = function () {
@@ -17,14 +17,14 @@ function Stats() {
         this.AvgPlayingTimePerTurn = 0;
         this.NumOfOneCardOnly = 0;
         this.NumOfTurns = 0;
-        this.TimePlaying = 0;
+        s_TimePlaying = 0;
         this.IntervalTimerId = 0;
     };
 
     this.startTurnTimer = function () {
         if(!this.Active) {
             this.Active = true;
-            this.IntervalTimerId = setInterval(timePlayingCounter, 1000);
+            this.IntervalTimerId = setInterval(this.timePlayingCounter, 1000);
         }
     };
 
@@ -41,7 +41,7 @@ function Stats() {
     };
 
     this.getAvgPlayTime = function () {
-        this.AvgPlayingTimePerTurn = this.TimePlaying / this.NumOfTurns;
+        this.AvgPlayingTimePerTurn = s_TimePlaying / this.NumOfTurns;
         return this.AvgPlayingTimePerTurn;
     };
 

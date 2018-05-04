@@ -37,6 +37,12 @@ body
     max-height:35%;
 }
 
+#stats{
+  position: absolute;
+  margin-top: 100%;
+  
+}
+
 #bot {
     position: absolute;
     top: 5%;

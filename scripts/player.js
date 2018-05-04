@@ -16,7 +16,7 @@ function Player(i_PlayerId) {
         this.Stats = new Stats();
         this.Stats.init();
 
-        if (this.PlayerId === "human" || this.PlayerId === "bot") { //************** no need to faceup bot
+        if (this.PlayerId === "human" ) {
             for (var i = 0; i < this.Cards.length; i++) {
                 this.Cards[i].makeCardFaceUp();
             }
@@ -25,13 +25,19 @@ function Player(i_PlayerId) {
         if (this.PlayerId === "human") {
 
             this.startYourTurn = function () {
-                this.Stats.startTurnTimer();
+                if(!this.Playing) {
+                    this.Playing = true;
+                    this.Stats.startTurnTimer();
+                }
             };
             this.endYourTurn = function () {
-                if (this.Cards.length === 1) {
-                    this.Stats.incrementNumOfOneCard();
+                if(this.Playing) {
+                    this.Playing = false;
+                    if (this.Cards.length === 1) {
+                        this.Stats.incrementNumOfOneCard();
+                    }
+                    this.Stats.endTurnTimer();
                 }
-                this.Stats.endTurnTimer();
             };
         }
         else if (this.PlayerId === "bot") {
@@ -49,7 +55,7 @@ function Player(i_PlayerId) {
                     var cardIndex = this.hasCard("change_colorful");
                     if (cardIndex !== -1) {
                         this.GameEngine.CardClick(cardIndex);
-                        var randColor = "red"; //**********create Rand number function
+                        var randColor = randomColor();
                         this.GameEngine.CardClick(randColor);
                         return;
                     }
@@ -65,27 +71,8 @@ function Player(i_PlayerId) {
                         var takistate = true;
                         this.GameEngine.CardClick(cardIndex);
                         return;
-                        // var takiColor = this.Cards[cardIndex].getColor();
-                        // while (cardIndex !== -1) {
-                        //     this.GameEngine.CardClick(cardIndex);
-                        //     cardIndex = -1;
-                        //
-                        //     for (var i = 0; i < this.Cards.length; i++) {
-                        //         if (this.Cards[i].getColor() === takiColor) {
-                        //             cardIndex = i;
-                        //         }
-                        //     }
-                        // }
-                        // return;
                     }
-
-                    //else
-                    cardIndex = -1;
-                    for (var i = 0; i < this.Cards.length; i++) {
-                        if (this.Cards[i].getColor() === this.Pile.getTopCardColor() || this.Cards[i].getId() === this.Pile.getTopCardId()) {
-                            cardIndex = i;
-                        }
-                    }
+                    cardIndex = this.checkForValidCard();
                     if (cardIndex !== -1) {
 
                         this.GameEngine.CardClick(cardIndex);
@@ -101,7 +88,6 @@ function Player(i_PlayerId) {
             this.endYourTurn = function () {
 
                 if(this.Playing){
-
                     this.Playing = false;
                     if (this.Cards.length === 1) {
                         this.Stats.incrementNumOfOneCard();
@@ -111,6 +97,44 @@ function Player(i_PlayerId) {
             };
         }
     };
+
+    this.checkForValidCard = function () {
+
+        var cardIndex = -1;
+
+        for (var i = 0; i < this.Cards.length; i++) {
+            if (this.Cards[i].getColor() === this.Pile.getTopCardColor() || this.Cards[i].getId() === this.Pile.getTopCardId()) {
+                cardIndex = i;
+                break;
+            }
+        }
+
+        return cardIndex;
+    };
+
+    function randomColor() {
+
+        var colorIndex = Math.floor(Math.random() * 4);
+        var resColor = null;
+
+        switch (colorIndex) {
+            case 0:
+                resColor = "red";
+                break;
+            case 1:
+                resColor = "blue";
+                break;
+            case 2:
+                resColor = "green";
+                break;
+            case 3:
+                resColor = "yellow";
+                break;
+        }
+
+        return resColor;
+    };
+
 
     this.hasCard = function (i_CardType) {
 
@@ -151,7 +175,7 @@ function Player(i_PlayerId) {
 
     this.addCard = function (card) {
 
-        if (this.PlayerId === "human") {
+        if (this.PlayerId === "human"||this.PlayerId === "bot") {
             card.makeCardFaceUp();
         }
 
@@ -196,141 +220,7 @@ function Player(i_PlayerId) {
     this.sleep = function(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
-
+    this.setPlayingToFalse = function(){
+        this.Playing=false;
+    }
 }
-
-//         this.startYourTurn = function () {
-//
-//             this.Stats.startTurnTimer();
-//             var topPileCard = this.Pile.getTopCardFromPile();
-//             var cardIndex = hasCard("change_colorful", this, topPileCard).toString();
-//             var elem;
-//
-//             if (cardIndex != -1) {// card found
-//
-//                 elem = document.getElementById(cardIndex);
-//                 this.GameEngine.CardClick(elem);
-//                 elem = document.createElement("div");
-//                 elem.setAttribute("id", "red"); //888888888888888888888888 need to rand color
-//             }
-//             else {
-//
-//                 cardIndex = hasCard("stop", this, topPileCard);
-//
-//                 if (cardIndex != -1) {
-//                     elem = document.getElementById(cardIndex);
-//                 }
-//                 else {
-//                     cardIndex = hasCard("taki", this, topPileCard).toString();
-//
-//                     if (cardIndex != -1) {
-//
-//                         elem = document.getElementById(cardIndex);
-//                         var botCards = this.Cards;
-//                         var takiColor = botCards[cardIndex].getColor();
-//
-//                         while (cardIndex != -1) {
-//
-//                             this.GameEngine.CardClick(cardIndex);
-//                             cardIndex = -1;
-//                             for (var i = 0; i < botCards.length; i++) {
-//                                 if (botCards[i].getColor() === takiColor) {
-//                                     cardIndex = i;
-//                                 }
-//                             }
-//                         }
-//                         elem = false;
-//
-//                     } else {
-//                         var botCards = this.Cards;
-//
-//                         for (var i = 0; i < botCards.length; i++) {
-//                             if (botCards[i].getColor() === topPileCard.getColor() || botCards[i].getId() === topPileCard.getId()) {
-//                                 cardIndex = i;
-//                                 elem = document.getElementById(cardIndex);
-//                                 break;
-//                             }
-//                         }
-//                     }
-//                 }
-//             }
-//             if (elem) {
-//                 // elem.click();
-//                 this.GameEngine.CardClick(cardIndex);
-//             }
-//             else {
-//                 // document.getElementById("deck").click();
-//                 this.GameEngine.DeckClick();
-//             }
-//         };
-//
-//         this.endYourTurn = function () {
-//             if (this.Cards.length === 1) {
-//                 this.Stats.incrementNumOfOneCard();
-//             }
-//             this.Stats.endTurnTimer();
-//         };
-//     }
-// };
-
-// this.startHumanTurn = function () {
-//     this.Stats.startTurnTimer();
-// };
-// var endHumanTurn = function () {
-//     if (this.Cards.length === 1) {
-//         this.Stats.incrementNumOfOneCard();
-//     }
-//     this.Stats.endTurnTimer();
-// };
-// var startBotTurn = function() {
-//
-//     var currBot = i_Players.getCurrentPlayer();
-//     currBot.getStats().startTurnTimer();
-//     var topPileCard = i_Pile.getTopCardFromPile();
-//     var elem;
-//     var cardIndex = hasCard("change_colorful", currBot, topPileCard).toString();
-//
-//
-//     if (cardIndex != -1) {// card found
-//
-//         elem = document.getElementById(cardIndex);
-//     }
-//     else {
-//
-//         cardIndex = hasCard("stop", currBot, topPileCard);
-//
-//         if (cardIndex != -1) {
-//             elem = document.getElementById(cardIndex);
-//         }
-//         else {
-//             cardIndex = hasCard("taki", currBot, topPileCard).toString();
-//
-//             if (cardIndex != -1) {
-//                 elem = document.getElementById(cardIndex);
-//             } else {
-//                 var botCards = currBot.getCards();
-//
-//                 for (var i = 0; i < botCards.length; i++) {
-//                     if (botCards[i].getColor() === topPileCard.getColor() || botCards[i].getId() === topPileCard.getId()) {
-//                         cardIndex = i;
-//                         elem = document.getElementById(cardIndex);
-//                         break;
-//                     }
-//                 }
-//             }
-//         }
-//     }
-//     if (elem) {
-//         elem.click();
-//     }
-//     else {
-//         document.getElementById("deck").click();
-//     }
-// };
-// var endBotTurn = function () {
-//     if (this.Cards.length === 1) {
-//         this.Stats.incrementNumOfOneCard();
-//     }
-//     this.Stats.endTurnTimer();
-// };
-

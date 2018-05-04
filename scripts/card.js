@@ -1,11 +1,11 @@
 
 var faceDownAttribute = "card_back";
 
-function Card(eColor, eId, card_atrributes,actionCard) {
+function Card(i_Color, i_Id, card_atrributes, actionCard) {
     //attributes[1] is the valid attribute
 
-    this.color = eColor;
-    this.id = eId;
+    this.color = i_Color;
+    this.id = i_Id;
     this.cardAtrribute = card_atrributes;
     this.isUp = false;
     this.isActionCard = actionCard;
@@ -26,12 +26,16 @@ function Card(eColor, eId, card_atrributes,actionCard) {
         return attributesStr;
     }
 
-    this.addAttribute = function (newAttribute) {
-        this.attributes.push(newAttribute);
+    this.setAttributes = function (newAttribute) {
+        this.attributes[1] = newAttribute;
     }
 
     this.getColor = function(){
         return this.color;
+    }
+
+    this.setColor = function (i_Color) {
+        this.color = i_Color;
     }
 
     this.getId = function(){

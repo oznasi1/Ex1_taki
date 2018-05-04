@@ -30,9 +30,10 @@ function ActionManager(i_Pile) {
 
     this.AddCardToPileWhenTaki = function (i_CurrPlayer, i_Card) {
 
-        this.isValidCard = (eGameState["taki"] === eGameState[i_Card.getId()] || i_Card.getColor() === this.TakiColor);
+        this.isValidCard = (i_Card.getColor() === this.TakiColor || (this.Pile.getTopCardId() === "taki" && i_Card.getId() === "taki"));
 
         if (this.isValidCard) {
+
             this.Pile.addCard(i_Card);
             i_CurrPlayer.removeCard(i_Card);
 
@@ -40,10 +41,7 @@ function ActionManager(i_Pile) {
                 this.TakiColor = i_Card.getColor();
             }
         }
-        else if(i_Card.getColor() !== this.TakiColor) {
-            this.gameState = eGameState["normal"];
-        }
-    }
+    };
 
 
     this.AddCardToPile = function (i_CurrPlayer, i_Card) {

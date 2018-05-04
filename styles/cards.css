@@ -166,6 +166,19 @@
   background-image: url('./assets/change_colorful.png');
 }
 
+.card_change_red {
+  background-image: url('./assets/change_red.png');
+}
+.card_change_blue {
+  background-image: url('./assets/change_blue.png');
+}
+.card_change_green {
+  background-image: url('./assets/change_green.png');
+}
+.card_change_yellow{
+  background-image: url('./assets/change_yellow.png');
+}
+
 .card_plus_blue {
   background-image: url('./assets/plus_blue.png');
 }

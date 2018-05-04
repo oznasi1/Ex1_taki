@@ -12,8 +12,8 @@ function GameUI() {
         m_Engine.initEngine(this, NUM_OF_HUMAN, NUM_OF_BOT);
         document.getElementById("menuWrapper").style.display = "none";
         document.getElementById("gameWrapper").style.display = "block";
+        renderStats();
     };
-
 
     this.RenderWinnerScreen = function (playersArr, winnerIndex, timer) {
 
@@ -21,72 +21,41 @@ function GameUI() {
         document.getElementById("menuWrapper").style.display = "block";
         document.getElementById("menuWrapper").innerHTML = "";
 
-        var elem =document.createElement("a","winner");
-        if(winnerIndex==0){
-            elem.innerHTML = "You Won!!!"+"<pre>";
+        var elem = document.createElement("a", "winner");
+        if (winnerIndex == 0) {
+            elem.innerHTML = "You Won!!!" + "<pre>";
         }
         else {
-            elem.innerHTML = "You Lost!!!"+"<pre>";
+            elem.innerHTML = "You Lost!!!" + "<pre>";
         }
         document.getElementById("menuWrapper").appendChild(elem);
 
-        elem =document.createElement("a","timer");
-        elem.innerHTML = "time:\n"+timer+"<pre>";
+        elem = document.createElement("a", "timer");
+        elem.innerHTML = "time:\n" + timer +" seconds"+ "<pre>";
         document.getElementById("menuWrapper").appendChild(elem);
 
-        elem =document.createElement("a","Human_num_turns");
-        elem.innerHTML = "number player turns:\n"+playersArr[0].getStats().getNumOfTurns()+"<pre>";
+        elem = document.createElement("a", "Human_num_turns");
+        elem.innerHTML = "number player turns:\n" + playersArr[0].getStats().getNumOfTurns() + "<pre>";
         document.getElementById("menuWrapper").appendChild(elem);
 
-        elem =document.createElement("a","Human_avg_time");
-        elem.innerHTML = "average player time per turn:\n"+playersArr[0].getStats().getAvgPlayTime()+"<pre>";
+        elem = document.createElement("a", "Human_avg_time");
+        elem.innerHTML = "average player time per turn:\n" + playersArr[0].getStats().getAvgPlayTime() + "<pre>";
         document.getElementById("menuWrapper").appendChild(elem);
 
-        elem =document.createElement("a","Human_last_one");
-        elem.innerHTML =  "number of last card of player:\n"+playersArr[0].getStats().getNumOfOneCard()+"<pre>";
+        elem = document.createElement("a", "Human_last_one");
+        elem.innerHTML = "number of last card of player:\n" + playersArr[0].getStats().getNumOfOneCard() + "<pre>";
         document.getElementById("menuWrapper").appendChild(elem);
 
-        elem =document.createElement("a","bot_num_turns");
-        elem.innerHTML =  "number bot turns:\n"+playersArr[1].getStats().getNumOfTurns()+"<pre>";
+        elem = document.createElement("a", "bot_num_turns");
+        elem.innerHTML = "number bot turns:\n" + playersArr[1].getStats().getNumOfTurns() + "<pre>";
         document.getElementById("menuWrapper").appendChild(elem);
 
-        elem =document.createElement("a","bot_last_one");
-        elem.innerHTML = "number of last card of bot:\n"+playersArr[1].getStats().getNumOfOneCard()+"<pre>";
+        elem = document.createElement("a", "bot_last_one");
+        elem.innerHTML = "number of last card of bot:\n" + playersArr[1].getStats().getNumOfOneCard() + "<pre>";
         document.getElementById("menuWrapper").appendChild(elem);
 
-    }
+    };
 
-
-
-    
-//     <div id="finishGameWrapper">
-//         <a id="winner"></a>
-//         <div id="human-stats" class="stats">
-//           <h2>Clock
-//             <a id="timer">0:0:0</a>
-//           </h2>
-//           <h1>Your Stats:</h1>
-//           <h2>Turns played:
-//             <a id="Human_num_turns">0</a>
-//           </h2>
-//           <h2 style="font-size: 100%;">Average turn time:
-//             <a id="Human_avg_time">0</a>
-//           </h2>
-//           <h2 style="font-size: 90%;">Last card declerations:
-//             <a id="Human_last_one">0</a>
-//           </h2>
-//         </div>
-//         <div id="bot-stats" class="stats">
-//           <h1>bot Stats:</h1>
-//           <h2>Turns played:
-//             <a id="bot_num_turns">0</a>
-//           </h2>
-//           <h2 style="font-size: 90%;">Last card declerations:
-//             <a id="bot_last_one">0</a>
-//           </h2>
-//         </div>
-//       </div>
-//   </div>
     function getRndInteger(min, max) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
@@ -136,6 +105,40 @@ function GameUI() {
 
         renderPlayer(playersList[0], "player");
         renderPlayer(playersList[1], "bot");
+        updateStats();
+    }
+
+    function updateStats(){
+        var player = m_Engine.Players.getPlayersList()[0];
+        if(document.getElementById("numTurns")){
+            document.getElementById("numTurns").innerHTML="number player turns:\n" + player.getStats().getNumOfTurns() + "*****";
+            document.getElementById("Human_avg_time").innerHTML= "average player time per turn:\n" + player.getStats().getAvgPlayTime() + "*****";
+            document.getElementById("Human_last_one").innerHTML="number of last card of player:\n" + player.getStats().getNumOfOneCard();
+        }
+    }
+
+    function renderStats(){
+        var elem1,elem2,elem3;
+        var player = m_Engine.Players.getPlayersList()[0];
+
+        elem1 = document.createElement("a");
+        elem1.setAttribute("class","stats");
+        elem1.id = "numTurns"
+        elem1.innerHTML = "number player turns:\n" + player.getStats().getNumOfTurns() + "*****";
+        document.getElementById("gameWrapper").appendChild(elem1);
+
+        elem2 = document.createElement("a");
+        elem2.setAttribute("class","stats");
+        elem2.id = "Human_avg_time"
+        elem2.innerHTML = "average player time per turn:\n" + player.getStats().getAvgPlayTime() + "*****";
+        document.getElementById("gameWrapper").appendChild(elem2);
+
+        elem3 = document.createElement("a");
+        elem3.setAttribute("class","stats");
+        elem3.id = "Human_last_one"
+        elem3.innerHTML = "number of last card of player:\n" + player.getStats().getNumOfOneCard();
+        document.getElementById("gameWrapper").appendChild(elem3);
+
     }
 
     function renderPlayer(player, playerDivName) {
@@ -170,10 +173,7 @@ function GameUI() {
                 this.turnPic.setAttribute("class", "playerTurn");
                 document.getElementById("pile").appendChild(this.turnPic);
                 break;
-            // case "bot":
-            //     this.turnPic.setAttribute("class", "botTurn");
-            //     document.getElementById("pile").appendChild(this.turnPic);
-            //     break;
+
         }
     }
 
@@ -196,6 +196,11 @@ function GameUI() {
     function card_OnClick(e) {
         m_Engine.Card_OnClick(e);
     };
+
+    function color_OnClick(e) {
+        HideColorPicker();
+        m_Engine.Card_OnClick(e);
+    }
 
     function deck_OnClick(e) {
         m_Engine.Deck_OnClick();
@@ -222,29 +227,26 @@ function GameUI() {
         var button1 = document.createElement("button");
         button1.setAttribute("id", "red");
         button1.setAttribute("class", "btn-group button red");
-        button1.addEventListener("click", card_OnClick);
-        button1.addEventListener("click", HideColorPicker);
+        button1.addEventListener("click", color_OnClick);
         colorPicker.appendChild(button1);
 
         var button2 = document.createElement("button");
         button2.setAttribute("id", "blue");
         button2.setAttribute("class", "btn-group button blue");
-        button2.addEventListener("click", card_OnClick);
+        button2.addEventListener("click", color_OnClick);
         colorPicker.appendChild(button2);
 
         var button3 = document.createElement("button");
         button3.setAttribute("id", "green");
         button3.setAttribute("class", "btn-group button green");
-        button3.addEventListener("click", card_OnClick);
+        button3.addEventListener("click", color_OnClick);
         colorPicker.appendChild(button3);
 
         var button4 = document.createElement("button");
         button4.setAttribute("id", "yellow");
         button4.setAttribute("class", "btn-group button yellow");
-        button4.addEventListener("click", card_OnClick);
+        button4.addEventListener("click", color_OnClick);
         colorPicker.appendChild(button4);
-
-        // document.getElementById("gameWrapper").appendChild(colorPicker);
         document.getElementById("pile").appendChild(colorPicker);
     }
 
@@ -255,6 +257,4 @@ function GameUI() {
     function HideColorPicker() {
         document.getElementById("colorPicker").style.display = "none";
     }
-
-
 }

@@ -53,8 +53,6 @@ function Players() {
 
         this.CurrentPlayerIndex = (++this.CurrentPlayerIndex) % (this.numOfBot + this.numOfHumans);
         this.CurrentPlayer = this.Players[this.CurrentPlayerIndex];
-
-        // this.CurrentPlayer.startYourTurn();//start nextPlayar turn
     };
 
     this.startTurn = function(){
@@ -64,17 +62,4 @@ function Players() {
     this.getCurrentPlayerIndex = function(){
         return this.CurrentPlayerIndex;
     }
-
-    // this.jumpNextPlayerTurn = function(){
-    //     this.CurrentPlayer.endYourTurn(); //end currPlayer turn
-    //
-    //     this.CurrentPlayerIndex = (this.CurrentPlayerIndex + 2) % (this.numOfBot + this.numOfHumans);
-    //     this.CurrentPlayer = this.Players[this.CurrentPlayerIndex];
-    //
-    //     // this.CurrentPlayer.startYourTurn();//start nextPlayar turn
-    // };
-
-    // this.isHuman = function () {
-    //     return this.CurrentPlayer.getId() === "human";
-    // }
 }
