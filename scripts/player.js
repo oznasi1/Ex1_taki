@@ -175,7 +175,7 @@ function Player(i_PlayerId) {
 
     this.addCard = function (card) {
 
-        if (this.PlayerId === "human"||this.PlayerId === "bot") {
+        if (this.PlayerId === "human") {
             card.makeCardFaceUp();
         }
 
